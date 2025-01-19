@@ -61,3 +61,7 @@ static/resumes/*
 !static/img/*/no-image.jpg
 *.sqlite3
 .env
+docker/mysql/data/*
+!docker/mysql/data/.gitkeep
+
+
