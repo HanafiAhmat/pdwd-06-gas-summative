@@ -9,6 +9,7 @@ from products.models import Product
 from account.models import CustomerAddress
 from account.forms import CustomerAddressForm, RegistrationForm
 
+@csrf_protect
 def add_to_cart(request, product_id):
     if request.method == 'POST':
         product = Product.objects.filter(id=product_id).first()
