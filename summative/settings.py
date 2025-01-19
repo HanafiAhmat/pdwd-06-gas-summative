@@ -29,9 +29,9 @@ WEBSITE_URL = os.getenv('WEBSITE_URL', 'http://localhost')
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_DEBUG', False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','127.0.0.1','smartshop.hanafiahmat.com']
 
 # Application definition
 
