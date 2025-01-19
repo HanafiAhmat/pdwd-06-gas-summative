@@ -1,0 +1,195 @@
+{% extends "staff/layouts/staff.html" %}
+{% load static %}
+{% block staff_content %}
+<div class="container">
+    <div class="row">
+        <h3>{{mode}} Category</h3>
+    </div>
+
+    <div class="row">
+        <form class="row" method="POST" enctype="multipart/form-data" {% if is_validated %} was-validated {% endif %}>
+            {% csrf_token %}
+
+            <div class="col-md-8" style="height:auto;min-height:100%;">
+                <div class="row mt-4">
+                    <div class="form-group col">
+                        <label class="fw-bold" for="name">Name</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.name.errors %} is-invalid {% endif %}" 
+                                id="name" 
+                                name="name" 
+                                value="{{ form.name.value|default:'' }}" 
+                                required>
+                        <div class="invalid-feedback">
+                            {{ form.name.errors }}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col">
+                        <label class="fw-bold" for="code">Code <em class="fw-light">(auto generate if left empty)</em></label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.code.errors %} is-invalid {% endif %}" 
+                                id="code" 
+                                name="code" 
+                                value="{{ form.code.value|default:'' }}" 
+                                aria-describedby="codeHelpBlock">
+                        <div id="codeHelpBlock" class="form-text">
+                            Must be unique, not contain spaces, special characters, or emoji.
+                            <br/>Except for dash or underscore.
+                        </div>
+                        <div class="invalid-feedback">
+                            {{ form.code.errors }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col">
+                        <label class="fw-bold" for="short_description">Short Description</label>
+                        <textarea class="form-control mt-2 {% if is_validated and form.short_description.errors %} is-invalid {% endif %}" 
+                                    id="short_description" 
+                                    name="short_description" 
+                                    required>{{ form.short_description.value|default:'' }}</textarea>
+                        <div class="invalid-feedback">
+                            {{ form.short_description.errors }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4 mb-5">
+                    <div class="form-group col mb-5">
+                        <label class="fw-bold" for="description">Description</label>
+                        <textarea class="form-control mt-2 {% if is_validated and form.description.errors %} is-invalid {% endif %}" 
+                                    rows="20"
+                                    id="description" 
+                                    name="description" 
+                                    required>{{ form.description.value|default:'' }}</textarea>
+                        <div class="invalid-feedback">
+                            {{ form.description.errors }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="form-group col">
+                        <div class="progress mb-3" 
+                            id="retrieve-suggestion-progress"
+                            role="progressbar" 
+                            aria-label="Animated striped example" 
+                            aria-valuenow="100" 
+                            aria-valuemin="0" 
+                            aria-valuemax="100"
+                            style="display: none;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%">Retrieving Suggestion</div>
+                        </div>
+                        <label class="fw-bold" for="suggested-description">Suggested Description</label>
+                        <button class="btn btn-primary float-end" id="use-suggestion" type="button">Use Suggestion</button>
+                        <button class="btn btn-success float-end me-3" id="suggest-description" type="button">Suggest Description</button>
+                        <textarea class="form-control mt-2" rows="20" id="suggested-description" disabled></textarea>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="form-group col-md-12 text-center">
+                        <button type="submit" class="btn btn-outline-primary mb-2 me-3">{% if mode == 'Add' %} Save {% else %} Update {% endif %}</button>
+                        <a href="{% url 'staff_list_of_categories' %}" class="btn btn-outline-danger mb-2">Cancel</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="row mt-4">
+                    <div class="form-group col">
+                        <label class="fw-bold" for="default">Is Default</label>
+                        <select class="form-select mt-2" id="default" name="default">
+                            <option value="0" {% if form.instance.default is False %} selected {% endif %}>
+                                No
+                            </option>
+                            <option value="1" {% if form.instance.default is True %} selected {% endif %}>
+                                Yes
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col">
+                        <label class="fw-bold" for="default">Parent Category</label>
+                        <select class="form-control mt-2 {% if is_validated and form.parent_id.errors %} is-invalid {% endif %}" 
+                                id="parent_id" 
+                                name="parent_id">
+                            <option value="">---</option>
+                            {% for category in availableCategories %}
+                                <option value="{{category.id}}" {% if category.id is form.instance.parent_id %} selected {% endif %}>
+                                    {{category.name}}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">
+                            {{ form.parent_id.errors }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col">
+                        <label class="fw-bold" for="image">Image</label>
+                        <input type="file" class="form-control mt-2" id="image" name="image" accept="image/*,.heic">
+                        <div class="w-100 text-center mt-3" style="height: 200px;">
+                            <img id="image_preview" src="{{ form.instance.image.url|default:'' }}" height="100%" width="auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<template id="additional-image-template">
+    <div class="w-100 text-center mt-3" style="height: 100px;width:100px;position: relative;" id="additional-image-%id%">
+        <img class="added-images" data-image-name="%imageName%" data-image-id="%id%" src="%src%" height="100%" width="auto"/>
+        <button type="button" class="btn btn-danger btn-sm remove-additional-image-btn" data-id="%id%" title="Remove" style="position: absolute;top:0;right:0;z-index:100;">
+            <i class="bi bi-x-circle-fill" data-id="%id%"></i>
+        </button>
+    </div>
+</template>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    document.getElementById('image').addEventListener('change', (event) => {
+        let value = event.target.files[0];
+        document.getElementById('image_preview').src = URL.createObjectURL(value);
+    });
+
+    const retrieveSuggestionProgress = document.getElementById('retrieve-suggestion-progress');
+    const suggestedDescription = document.getElementById('suggested-description');
+    document.getElementById('suggest-description').addEventListener('click', (event) => {
+        retrieveSuggestionProgress.style.display = 'block';
+        const request = new Request(
+            '/staff/suggest-category-description/',
+            {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With':'XMLHttpRequest',
+                    'X-CSRFToken': csrftoken
+                },
+                mode: 'same-origin', // Do not send CSRF token to another domain.
+                body: JSON.stringify({
+                    'name': document.getElementById('name').value,
+                    'short_description': document.getElementById('short_description').value,
+                })
+            }
+        );
+        fetch(request)
+            .then((response) => {
+                return response.json();
+            }).then((resp) => {
+                suggestedDescription.innerHTML = resp.result;
+                retrieveSuggestionProgress.style.display = 'none';
+            });
+    });
+    document.getElementById('use-suggestion').addEventListener('click', (event) => {
+        document.getElementById('description').innerHTML = suggestedDescription.innerHTML;
+    });
+</script>
+{% endblock %}

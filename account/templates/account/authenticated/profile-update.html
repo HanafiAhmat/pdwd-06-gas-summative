@@ -1,0 +1,112 @@
+{% extends "account/layouts/customer.html" %}
+{% load static %}
+{% block customer_account_title %}
+    <h2>Update Profile</h2>
+{% endblock %}
+{% block customer_account_content %}
+<main>
+    <div class="container">
+        <form class="row" method="POST" {% if is_validated %} was-validated {% endif %}>
+            {% csrf_token %}
+            <input type="hidden" name="user_id" value="{{user.id}}">
+
+            <div class="col">
+                <div class="row mt-4">
+                    <div class="form-group col-md-6">                         
+                        <label class="fw-bold" for="first_name">First Name <span class="text-danger">*</span></label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.first_name.errors %} is-invalid {% endif %}" 
+                                id="first_name" 
+                                name="first_name" 
+                                value="{{form.first_name.value}}" 
+                                required>
+                        <div class="invalid-feedback">
+                            {{ form.first_name.errors }}
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="last_name">Last Name <span class="text-danger">*</span></label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.last_name.errors %} is-invalid {% endif %}" 
+                                id="last_name" 
+                                name="last_name" 
+                                value="{{form.last_name.value}}" 
+                                required>
+                        <div class="invalid-feedback">
+                            {{ form.last_name.errors }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="email">Email <span class="text-danger">*</span></label>
+                        <input type="email" 
+                                class="form-control mt-2 {% if is_validated and form.email.errors %} is-invalid {% endif %}" 
+                                id="email" 
+                                name="email" 
+                                value="{{form.email.value|default:''}}" 
+                                required>
+                        <div class="invalid-feedback">
+                            {{ form.email.errors }}
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="phone">Phone Number</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.phone.errors %} is-invalid {% endif %}" 
+                                id="phone" 
+                                name="phone" 
+                                value="{{form.phone.value|default:''}}" 
+                                >
+                        <div class="invalid-feedback">
+                            {{ form.phone.errors }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="date_of_birth">Date of Birth</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.date_of_birth.errors %} is-invalid {% endif %}" 
+                                id="date_of_birth" 
+                                name="date_of_birth" 
+                                value="{{form.date_of_birth.value|default:''}}" 
+                                >
+                        <div class="invalid-feedback">
+                            {{ form.date_of_birth.errors }}
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold">Gender</label>
+                        <select class="form-control mt-2" name="gender_id">
+                            {% for gender in allGenders %}
+                                <option value="{{gender.id}}" {% if gender.id is form.gender_id.value %} selected {% endif %}>{{gender.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>                
+                
+                <div class="row mt-4">
+                    <div class="form-group col-md-12 text-center">
+                        <button type="submit" class="btn btn-outline-primary mt-4">Update</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</main>
+{% endblock %}
+
+{% block js %}
+<script>
+    const elem = document.querySelector('input[name="date_of_birth"]');
+    const datepicker = new Datepicker(elem, {
+      // ...options
+    }); 
+</script>
+{% endblock %}

@@ -1,0 +1,56 @@
+
+<div class="row">
+    <div class="col">
+        Showing Records: <span class="bold">{{ pagination.start }}</span> to <span class="bold">{% if pagination.stop < pagination.totalRecords %}{{ pagination.stop }}{% else %}{{ pagination.totalRecords }}{% endif %}</span> out of <span class="bold">{{ pagination.totalRecords }}</span>
+    </div>
+</div>
+
+{% if pagination.pages > 1 %}
+    <div class="row mt-4">
+        <nav class="w-auto m-auto" style="">
+            <ul class="pagination">
+
+                {% if pagination.showGoFirst %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ pagination.pageUrl }}page=1" title="Previous Page" aria-label="Previous Page">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if pagination.showGoBack %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ pagination.pageUrl }}page={{ pagination.previousPage }}" title="First Page" aria-label="First Page">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+
+                {% for page in pagination.pagesList %}
+                    <li class="page-item {% if pagination.currentPage is page %} active {% endif %}">
+                        <a class="page-link" href="{{ pagination.pageUrl }}page={{ page }}" title="Page {{ page }}" aria-label="Page {{ page }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+
+
+                {% if pagination.showGoNext %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ pagination.pageUrl }}page={{ pagination.nextPage }}" title="Next {{ page }}" aria-label="Next Page">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if pagination.showGoLast %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ pagination.pageUrl }}page={{ pagination.pages }}" title="Last {{ page }}" aria-label="Last Page">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+            </ul>
+        </nav>
+    </div>
+{% endif %}

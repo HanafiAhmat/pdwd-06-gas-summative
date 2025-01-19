@@ -1,0 +1,43 @@
+{% extends "account/layouts/customer.html" %}
+{% load static %}
+{% block customer_account_title %}
+    <h2>Profile</h2>
+{% endblock %}
+{% block customer_account_content %}
+<main>
+    <div class="container">
+        <div class="row py-4">
+            <div class="col-12 col-md-6 ">
+                <div class="w-100">
+                    <label class="text-decoration-underline">First Name</label>
+                    <p class="mt-2 p-2 bg-secondary text-white">{{ profile.user.first_name }}</p>
+                </div>
+                <div class="w-100">
+                    <label class="text-decoration-underline">Last Name</label>
+                    <p class="mt-2 p-2 bg-secondary text-white">{{ profile.user.last_name }}</p>
+                </div>
+                <div class="w-100">
+                    <label class="text-decoration-underline">Email</label>
+                    <p class="mt-2 p-2 bg-secondary text-white">{{ profile.user.email }}</p>
+                </div>
+                <div class="w-100">
+                    <label class="text-decoration-underline">Phone Number</label>
+                    <p class="mt-2 p-2 bg-secondary text-white">{{ profile.phone }}</p>
+                </div>
+                <div class="w-100">
+                    <label class="text-decoration-underline">Date Of Birth</label>
+                    <p class="mt-2 p-2 bg-secondary text-white">{{ profile.date_of_birth|default:'' }}</p>
+                </div>
+                <div class="w-100">
+                    <label class="text-decoration-underline">Gender</label>
+                    <p class="mt-2 p-2 bg-secondary text-white">{{ profile.gender.name }}</p>
+                </div>
+                <div class="mt-5 w-100 text-center">
+                    <a class="btn btn-outline-primary mx-5 mb-3" href="{% url 'account_profile_update' %}">Update Profile</a>
+                    <a class="btn btn-outline-primary mb-3" href="{% url 'account_profile_change_password' %}">Change Password</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

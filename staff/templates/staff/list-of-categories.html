@@ -1,0 +1,84 @@
+{% extends "staff/layouts/staff.html" %}
+{% load static %}
+{% block staff_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h3>List of Categories</h3>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'staff_add_category' %}" class="btn btn-outline-primary float-end" title="Add New Category">
+                Add New Category
+            </a>
+        </div>
+        <div class="col-12 mt-3">
+            <div class="card">
+                <div class="card-header text-center">
+                    {% include "partials/pagination.html" %}
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped-columns">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Short Description</th>
+                                <th>Is Default</th>
+                                <th>Parent Category</th>
+                                <th>No. of Child Categories</th>
+                                <th>No. of Products</th>
+                                <th style="min-width: 130px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for category in categories %}
+                                <tr>
+                                    <td>
+                                        {{ forloop.counter0|get_table_row_num:pagination.start }}
+                                    </td>
+                                    <td>
+                                        <img src="{{category.image.url|default:''}}" class="img" style="max-height: 100px;max-width: 100px;" alt="">
+                                    </td>
+                                    <td>
+                                        {{category.name}}
+                                    </td>
+                                    <td>
+                                        {{category.short_description}}
+                                    </td>
+                                    <td>
+                                        {{category.default}}
+                                    </td>
+                                    <td>
+                                        {{category.parent.name|default:''}}
+                                    </td>
+                                    <td>
+                                        {{category.no_of_children}}
+                                    </td>
+                                    <td>
+                                        {{category.no_of_products}}
+                                    </td>
+                                    <td>
+                                        <a href="/categories/{{category.code}}" class="btn btn-primary btn-sm d-inline-block me-1" title="View Product">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="/staff/edit-category/{{category.id}}" class="btn btn-primary btn-sm d-inline-block me-1" title="Edit Product">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a href="/staff/delete-category/{{category.id}}/" class="btn btn-danger btn-sm d-inline-block" onclick="return confirm('Are you sure you want to delete category `{{category.name}}`?')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-body-secondary text-center">
+                    {% include "partials/pagination.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

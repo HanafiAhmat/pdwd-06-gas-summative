@@ -1,0 +1,212 @@
+/*
+.quattrocento-regular {
+  font-family: "Quattrocento", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.quattrocento-bold {
+  font-family: "Quattrocento", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+*/
+
+/*
+.quattrocento-sans-regular {
+  font-family: "Quattrocento Sans", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.quattrocento-sans-bold {
+  font-family: "Quattrocento Sans", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.quattrocento-sans-regular-italic {
+  font-family: "Quattrocento Sans", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.quattrocento-sans-bold-italic {
+  font-family: "Quattrocento Sans", serif;
+  font-weight: 700;
+  font-style: italic;
+}
+*/
+
+body {
+  font-family: "Quattrocento Sans", serif;
+  font-weight: 400;
+  background-color: #963483;
+}
+
+i, .italic {
+  font-style: italic;
+}
+
+b, strong, .bold {
+  font-weight: 700;
+}
+
+.italic-bold {
+  font-weight: 700;
+  font-style: italic;
+}
+
+h1, h2, h3, h4, h5, h6, .heading {
+  font-family: "Quattrocento", serif;
+  font-weight: 700;
+}
+
+a {
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: #3066be;
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus {
+  background-color: #60afff;
+}
+
+header .navbar a.navbar-brand {
+  display: inline-block;
+}
+header .navbar h1.organisation-name {
+  width: fit-content;
+  display: inline-block;
+  vertical-align: middle;
+  margin-bottom: 0;
+}
+header div.navbar.bg-dark h1.organisation-name {
+  color: #60afff;
+}
+header div.navbar.bg-dark a {
+  color: white;
+}
+header div.navbar.bg-dark a:hover,
+header div.navbar.bg-dark a:focus {
+  color: gray;
+}
+
+main {
+  min-height: 75vh;
+  background-color: white;
+}
+
+footer a, 
+footer .nav .nav-item a {
+  color: white;
+}
+footer a:hover,
+footer a:focus,
+footer .nav .nav-item a:hover,
+footer .nav .nav-item a:focus {
+  color: gray;
+}
+
+.w-33 {
+  width: 33.333%;
+}
+
+.ws-25 {
+  display: inline-block;
+  width: 23%;
+  margin-left: 1%;
+  right: 1%;
+}
+
+.text-sl-lightest {
+  color: #2af5ff;
+}
+.bg-sl-lightest {
+  background-color: #2af5ff;
+}
+
+.text-sl-light {
+  color: #28c2ff;
+}
+.bg-sl-light {
+  background-color: #28c2ff;
+}
+
+.text-sl {
+  color: #60afff;
+}
+.bg-sl {
+  background-color: #60afff;
+}
+
+.text-sl-dark {
+  color: #3066be;
+}
+.bg-sl-dark {
+  background-color: #3066be;
+}
+
+.text-sl-darkest {
+  color: #963484;
+}
+.bg-sl-darkest {
+  background-color: #963484;
+}
+
+#homePageTopCarousel .carousel-inner .carousel-item img,
+#eventPageTopCarousel .carousel-inner .carousel-item img {
+  height: 500px !important;
+}
+
+#homePageIntro {
+  min-height: 350px;
+}
+
+#homePageLatestBooksCarousel img {
+  max-height: 200px;
+}
+
+#homePageLatestBooksCarouselMobile img {
+  height: 200px;
+}
+
+#mapContainer {
+  max-width: 100%;
+  overflow: hidden;
+  color: red;
+  width: 500px;
+  height: 500px;
+}
+
+#mapDisplay {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+}
+
+#mapDisplayIframe {
+  height: 100%;
+  width: 100%;
+  border: 0;
+}
+
+.profile-avatar {
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+}
+
+@media only screen and (max-width: 420px) {
+  #listFilters {
+    display: block !important;
+  }
+
+  footer ul {
+    justify-content: center !important;
+  }
+}

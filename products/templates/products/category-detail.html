@@ -1,0 +1,131 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block content %}
+<main>
+    <div class="container-fluid">
+        <div class="row py-4 bg-sl-dark text-white">
+            <div class="col">
+                <div class="container">
+                    <div class="row">
+                        {% for mainCategory in mainCategories %}
+                            <a class="col text-center d-block" href="/categories/{{ mainCategory.code }}">
+                                <img class="rounded mx-auto d-block" src="{{ mainCategory.image.url }}" height="150" width="150"/>
+                                <div class="w-100 align-center text-white">
+                                    {{ mainCategory.name }}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        {% if category is not None %}
+            <div class="row py-4">
+                <div class="col">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            {% for breadcrumb in category.breadcrumbs %}
+                                <li class="breadcrumb-item {{breadcrumb.activeClass}}"><a href="{{breadcrumb.url}}">{{breadcrumb.label}}</a></li>
+                            {% endfor %}
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+            {% if messages %}
+                <div class="row py-4">
+                    <div class="col">
+                        <div class="mt-3">
+                            {% for message in messages %}
+                                <div class="alert alert-{{message.tags}}" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="row py-4 pb-0">
+                <div class="col-12 col-md-6 text-center">
+                    <div id="imagesCarousel" class="carousel slide" style="height: 530px;">
+                        <div class="carousel-inner" style="height: 400px;">
+                            <div class="carousel-item active w-100 text-center">
+                                <img src="{{ category.image.url|default:'/static/img/categories/no-image.jpg' }}" height="400" width="auto" class="" alt="{{ category.image.name|default:'' }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 ">
+                    <div class="w-100">
+                        <label class="text-decoration-underline">Name</label>
+                        <p class="mt-2 p-2 bg-secondary text-white">{{ category.name }}</p>
+                    </div>
+                    <div class="w-100">
+                        <label class="text-decoration-underline">Short Description</label>
+                        <p class="mt-2 p-2 bg-secondary text-white">{{ category.short_description|safe }}</p>
+                    </div>
+                    {% if category.has_children %}
+                        <div class="w-100">
+                            <h4>Sub Categories</h4>
+                            <div class="row mt-4">
+                                {% for childCategory in category.children.all %}
+                                    <a class="col text-center d-block" href="/categories/{{ childCategory.code }}">
+                                        <img class="rounded mx-auto d-block" src="{{ childCategory.image.url }}" height="150" width="150"/>
+                                        <div class="w-100 align-center">
+                                            {{ childCategory.name }}
+                                        </div>
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if category.no_of_products > 0 %}
+                <div class="row py-4 pt-0">
+                    <div class="col-12">
+                        <h4>Products ({{ category.no_of_products }})</h4>
+                    </div>
+                </div>
+
+                <div class="row row-cols-md-4 g-5">
+                    {% for product in category.products.all %}
+                        <div class="col mb-4">
+                            <div class="card h-100">
+                                <img src="{{ product.main_image.url.url|default:'/static/img/products/no-image.jpg' }}" class="card-img-top product-image" style="max-height: 50%" alt="">
+                                <div class="card-body">
+                                    <h5 class="product-title">{{product.name}}</h5>
+                                    <p class="card-text">
+                                        <span class="d-block w-100 mt-3 product-price">${{product.price}}</span>
+                                        <span class="d-block w-100 mt-3 product-short-description">{{product.short_description|safe}}</span>
+                                    </p>
+                                </div>
+
+                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                    <div class="text-center mb-3">
+                                        <form action="/orders/add-to-cart/{{ product.id }}" method="POST">
+                                            {% csrf_token %}
+                                            <input name="quantity" type="hidden" min="1" value="1"/>
+                                            <button class="btn btn-success" type="submit">Add To Cart</button>
+                                        </form>
+                                        <a href="/products/{{category.code}}/{{product.slug}}" class="btn btn-outline-dark mt-auto">View More</a>
+                                        {% if user.is_authenticated and user.is_staff %}
+                                            <a href="/staff/edit-product/{{product.id}}" class="btn btn-outline-primary mt-auto me-2">Edit</a>
+                                            <a href="/staff/delete-product/{{product.id}}" class="btn btn-outline-danger mt-auto" onclick="return confirm('Are you sure you want to delete this product?')">Delete</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

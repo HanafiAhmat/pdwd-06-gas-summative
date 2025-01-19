@@ -1,0 +1,408 @@
+{% extends "layouts/base.html" %}
+{% load static %}
+{% block content %}
+<main>
+    <div class="container-fluid">
+        <div class="row py-4 bg-sl-dark text-white">
+            <div class="col">
+                <div class="container">
+                    <h2>Check Out</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form class="container" method="POST" {% if is_validated %} was-validated {% endif %}>
+        {% csrf_token %}
+
+        {% if messages %}
+            <div class="row py-4">
+                <div class="col">
+                    <div class="mt-3">
+                        {% for message in messages %}
+                            <div class="alert alert-{{message.tags}}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {% if cart.has_items %}
+            <div class="row py-4">
+                <div class="col-md-8">
+                    <h3>Items</h3>
+                    <table class="table table-bordered table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Price Per Piece</th>
+                                <th style="width: 15%;">Quantity</th>
+                                <th>Item Total Price</th>
+                                <th style="width: 5%">&nbsp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in cart %}
+                                <tr>
+                                    <td>{{item.name}}</td>
+                                    <td>${{item.price}}</td>
+                                    <td>
+                                        <input class="form-control product-quantities" type="number" min="0" data-product-id="{{item.product.id}}" name="quantity[{{item.product.id}}]" value="{{item.quantity}}"/>
+                                    </td>
+                                    <td>${{item.total_price}}</td>
+                                    <td>
+                                        <button class="btn btn-sm delete-cart-item text-danger" data-product-id="{{item.product.id}}">
+                                            <i class="bi bi-x-circle-fill" data-product-id="{{item.product.id}}"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot class="table-group-divider">
+                            <tr>
+                                <th colspan="2">&nbsp;</th>
+                                <th>
+                                    <button type="button" id="update-quantity" class="btn btn-sm btn-outline-primary me-3">Update</button>
+                                    <div id="quantity-update-loader" class="spinner-border spinner-border-sm" style="display: none;" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="col-md-4">
+                    <h3>Totals</h3>
+                    <div class="row">
+                        <table class="table table-bordered border-primary">
+                            <tbody>
+                                <tr>
+                                    <th>Items Total</th>
+                                    <td>${{cart.get_sub_total_price}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="form-group col-md-12 text-center">
+                            <button type="submit" class="btn btn-outline-primary mt-4">Check Out</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row py-4">
+                <div class="col-md-8">
+                    {% if user.is_authenticated %}
+                        <div class="container" id="address-selection">
+                            <h3>Saved Addresses</h3>
+                            <div class="row row-cols-md-3">
+                                {% for address in user.addresses.all %}
+                                    <div class="col">
+                                        <div class="card btn btn-outline-primary saved-address" data-address-id="{{address.id}}">
+                                            <div class="card-body">
+                                                <div class="w-100 text-end text-warning {% if address.default is False %} d-none {% endif %}">
+                                                    <i class="bi bi-bookmark-check-fill"></i>
+                                                    <span>Selected</span>
+                                                </div>
+                                                <div class="w-100">
+                                                    {{address|safe}}
+                                                </div>
+                                                <input class="saved-address-radio d-none" 
+                                                        type="radio" 
+                                                        name="address_id" 
+                                                        value="{{address.id}}" 
+                                                        {% if address.default %} checked {% endif %}>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="row mt-3 mb-5">
+                                <div class="col text-center">
+                                    <button type="button" id="add-different-address" class="btn btn-outline-primary mt-4">Add Different Address</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container d-none" id="use-saved-address-wrapper">
+                            <div class="row mt-3 mb-5">
+                                <div class="col text-center">
+                                    <button type="button" id="use-saved-address" class="btn btn-outline-primary mt-4">Use Saved Address</button>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="container {% if user.is_authenticated and user.addresses.count > 0 %} d-none {% endif %}" id="address-form">
+                        <div class="row mt-5">
+                            <h3>Account Details</h3>
+                            <div class="col">
+                                <div class="row mt-4">
+                                    <div class="form-group col-md-6">
+                                        <label class="fw-bold" for="recipient_first_name">Recipient First Name <span class="text-danger">*</span></label>
+                                        <input type="text" 
+                                                class="form-control mt-2 {% if is_validated and userform.first_name.errors %} is-invalid {% endif %}" 
+                                                id="recipient_first_name" 
+                                                name="recipient_first_name" 
+                                                value="{{ userform.first_name.value|default:'' }}" 
+                                                autocomplete="first-name given-name" 
+                                                >
+                                        <div class="invalid-feedback">
+                                            {{ userform.first_name.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="fw-bold" for="recipient_last_name">Recipient Last Name <span class="text-danger">*</span></label>
+                                        <input type="text" 
+                                                class="form-control mt-2 {% if is_validated and userform.last_name.errors %} is-invalid {% endif %}" 
+                                                id="recipient_last_name" 
+                                                name="recipient_last_name" 
+                                                value="{{ userform.last_name.value|default:'' }}" 
+                                                autocomplete="last-name family-name" 
+                                                >
+                                        <div class="invalid-feedback">
+                                            {{ userform.last_name.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="fw-bold" for="recipient_phone">Recipient Phone Number <span class="text-danger">*</span></label>
+                                        <input type="text" 
+                                                class="form-control mt-2 {% if is_validated and userform.phone.errors %} is-invalid {% endif %}" 
+                                                id="recipient_phone" 
+                                                name="recipient_phone" 
+                                                value="{{ userform.phone.value|default:'' }}" 
+                                                autocomplete="phone telephone" 
+                                                >
+                                        <div class="invalid-feedback">
+                                            {{ userform.phone.errors }}
+                                        </div>
+                                    </div>
+                                    {% if user.is_authenticated is False %}
+                                        <div class="form-group col-md-6">
+                                            <label class="fw-bold" for="email">Email Address <span class="text-danger">*</span></label>
+                                            <input type="email" 
+                                                    class="form-control mt-2 {% if is_validated and userform.email.errors %} is-invalid {% endif %}" 
+                                                    id="email" 
+                                                    name="email" 
+                                                    value="{{ userform.email.value|default:'' }}" 
+                                                    autocomplete="email email-address" 
+                                                    >
+                                            <div class="invalid-feedback">
+                                                {{ userform.email.errors }}
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label class="fw-bold" for="password">Password <span class="text-danger">*</span></label>
+                                            <input type="password" 
+                                                    class="form-control mt-2 {% if is_validated and userform.password.errors %} is-invalid {% endif %}" 
+                                                    id="password" 
+                                                    name="password" 
+                                                    autocomplete="new-password" 
+                                                    >
+                                            <div class="invalid-feedback">
+                                                {{ userform.password.errors }}
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label class="fw-bold" for="confirm_password">Password Confirmation <span class="text-danger">*</span></label>
+                                            <input type="password" 
+                                                    class="form-control mt-2 {% if is_validated and userform.confirm_password.errors %} is-invalid {% endif %}" 
+                                                    id="confirm_password" 
+                                                    name="confirm_password" 
+                                                    autocomplete="new-password" 
+                                                    >
+                                            <div class="invalid-feedback">
+                                                {{ userform.confirm_password.errors }}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-5">
+                            <h3>Delivery Address</h3>
+                            <div class="col">
+                                <div class="row mt-4">
+                                    <div class="form-group col-md-6">
+                                        <label class="fw-bold" for="postcode">Postal Code <span class="text-danger">*</span></label>
+                                        <input type="text" 
+                                                class="form-control mt-2 {% if is_validated and caform.postcode.errors %} is-invalid {% endif %}" 
+                                                id="postcode" 
+                                                name="postcode" 
+                                                value="{{ caform.postcode.value|default:'' }}" 
+                                                >
+                                        <div class="invalid-feedback">
+                                            {{ caform.postcode.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="fw-bold" for="street">Street <span class="text-danger">*</span></label>
+                                        <input type="text" 
+                                                class="form-control mt-2 {% if is_validated and caform.street.errors %} is-invalid {% endif %}" 
+                                                id="street" 
+                                                name="street" 
+                                                value="{{ caform.street.value|default:'' }}" 
+                                                >
+                                        <div class="invalid-feedback">
+                                            {{ caform.street.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="fw-bold" for="street_optional">Street (optional)</label>
+                                        <input type="text" 
+                                                class="form-control mt-2 {% if is_validated and caform.street_optional.errors %} is-invalid {% endif %}" 
+                                                id="street_optional" 
+                                                name="street_optional" 
+                                                value="{{ caform.street_optional.value|default:'' }}" 
+                                                >
+                                        <div class="invalid-feedback">
+                                            {{ caform.street.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="fw-bold" for="building_name">Building Name (optional)</label>
+                                        <input type="text" 
+                                                class="form-control mt-2 {% if is_validated and caform.building_name.errors %} is-invalid {% endif %}" 
+                                                id="building_name" 
+                                                name="building_name" 
+                                                value="{{ caform.building_name.value|default:'' }}" 
+                                                >
+                                        <div class="invalid-feedback">
+                                            {{ caform.street.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="fw-bold" for="city">City</label>
+                                        <input type="text" 
+                                                class="form-control mt-2 {% if is_validated and caform.city.errors %} is-invalid {% endif %}" 
+                                                id="city" 
+                                                name="city" 
+                                                value="{{ caform.city.value|default:'' }}" 
+                                                >
+                                        <div class="invalid-feedback">
+                                            {{ caform.city.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="fw-bold" for="state">State</label>
+                                        <input type="text" 
+                                                class="form-control mt-2 {% if is_validated and caform.state.errors %} is-invalid {% endif %}" 
+                                                id="state" 
+                                                name="state" 
+                                                value="{{ caform.state.value|default:'' }}" 
+                                                >
+                                        <div class="invalid-feedback">
+                                            {{ caform.state.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <label class="fw-bold" for="country">Country <span class="text-danger">*</span></label>
+                                        <input type="text" 
+                                                class="form-control mt-2 {% if is_validated and caform.country.errors %} is-invalid {% endif %}" 
+                                                id="country" 
+                                                name="country" 
+                                                value="{{ caform.country.value|default:'' }}" 
+                                                >
+                                        <div class="invalid-feedback">
+                                            {{ caform.country.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="container">
+                        <div class="col">
+                            <div class="row mt-3 mb-5">
+                                <div class="col text-center">
+                                    <button type="submit" class="btn btn-outline-primary mt-4">Check Out</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="row py-4">
+                <div class="col">
+                    <div class="mt-3">
+                        <div class="alert alert-warning" role="alert">
+                            Your Shopping Cart is empty. <a href="/">Continue shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </form>
+</main>
+{% endblock %}
+
+{% block js %}
+<script>
+    if (typeof csrftoken === undefined) {
+        const csrftoken = getCookie('csrftoken');
+    }
+    const quantityInputs = document.querySelectorAll('.product-quantities');
+    const quantityUpdateLoader = document.getElementById('quantity-update-loader');
+    const updateQuantityBtn = document.getElementById('update-quantity');
+    updateQuantityBtn.addEventListener('click', (event) => {
+        let data = {items:[]}
+        quantityInputs.forEach((element) => {
+            let value = {
+                product_id: element.dataset['productId'],
+                quantity: element.value
+            };
+            data.items.push(value);
+        });
+
+        quantityUpdateLoader.style.display = 'block';
+        const request = new Request(
+            '/orders/checkout/update-cart-items-quantity',
+            {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With':'XMLHttpRequest',
+                    'X-CSRFToken': csrftoken
+                },
+                mode: 'same-origin',
+                body: JSON.stringify(data)
+            }
+        );
+        fetch(request)
+            .then((response) => {
+                return response.json();
+            }).then((resp) => {
+                quantityUpdateLoader.style.display = 'none';
+                if (resp.result) {
+                    window.location.reload();
+                }
+            });
+    });
+
+    const useSavedAddressWrapper = document.getElementById('use-saved-address-wrapper');
+    const useSavedAddress = document.getElementById('use-saved-address');
+    const addressSelection = document.getElementById('address-selection');
+    const addressForm = document.getElementById('address-form');
+    const addDifferentAddress = document.getElementById('add-different-address');
+    if (typeof addDifferentAddress !== undefined) {
+        addDifferentAddress.addEventListener('click', (event) => {
+            addressSelection.classList.add('d-none');
+            addressForm.classList.remove('d-none');
+            useSavedAddressWrapper.classList.remove('d-none');
+        });
+    }
+    if (typeof useSavedAddress !== undefined) {
+        useSavedAddress.addEventListener('click', (event) => {
+            addressSelection.classList.remove('d-none');
+            addressForm.classList.add('d-none');
+            useSavedAddressWrapper.classList.add('d-none');
+        });
+    }
+</script>
+{% endblock %}

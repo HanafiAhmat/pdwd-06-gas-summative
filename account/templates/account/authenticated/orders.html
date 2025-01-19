@@ -1,0 +1,50 @@
+{% extends "account/layouts/customer.html" %}
+{% load static %}
+{% block customer_account_title %}
+    <h2>Account Orders</h2>
+{% endblock %}
+{% block customer_account_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 mt-3">
+            <div class="card">
+                <div class="card-header text-center">
+                    Order History
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>No. Of Items</th>
+                                <th>Created Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <td>
+                                        {{ forloop.counter }}
+                                    </td>
+                                    <td>
+                                        {{order.no_of_items}}
+                                    </td>
+                                    <td>
+                                        {{order.created_at}}
+                                    </td>
+                                    <td>
+                                        <div class="">
+                                            <a class="btn btn-outline-primary btn-sm me-2 mb-2" href="/account/orders/{{order.id}}">View Details</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

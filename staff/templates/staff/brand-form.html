@@ -1,0 +1,103 @@
+{% extends "staff/layouts/staff.html" %}
+{% load static %}
+{% block staff_content %}
+<div class="container">
+    <div class="row">
+        <h3>{{mode}} Brand</h3>
+    </div>
+
+    <div class="row">
+        <form class="row" method="POST" enctype="multipart/form-data" {% if is_validated %} was-validated {% endif %}>
+            {% csrf_token %}
+
+            <div class="col-md-8" style="height:auto;min-height:100%;">
+                <div class="row mt-4">
+                    <div class="form-group col">
+                        <label class="fw-bold" for="name">Name</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.name.errors %} is-invalid {% endif %}" 
+                                id="name" 
+                                name="name" 
+                                value="{{ form.name.value|default:'' }}" 
+                                required>
+                        <div class="invalid-feedback">
+                            {{ form.name.errors }}
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col">
+                        <label class="fw-bold" for="code">Code <em class="fw-light">(auto generate if left empty)</em></label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.code.errors %} is-invalid {% endif %}" 
+                                id="code" 
+                                name="code" 
+                                value="{{ form.code.value|default:'' }}" 
+                                aria-describedby="codeHelpBlock">
+                        <div id="codeHelpBlock" class="form-text">
+                            Must be unique, not contain spaces, special characters, or emoji.
+                            <br/>Except for dash or underscore.
+                        </div>
+                        <div class="invalid-feedback">
+                            {{ form.code.errors }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col">
+                        <label class="fw-bold" for="short_description">Short Description</label>
+                        <textarea class="form-control mt-2 {% if is_validated and form.short_description.errors %} is-invalid {% endif %}" 
+                                    id="short_description" 
+                                    name="short_description" 
+                                    required>{{ form.short_description.value|default:'' }}</textarea>
+                        <div class="invalid-feedback">
+                            {{ form.short_description.errors }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col-md-12 text-center">
+                        <button type="submit" class="btn btn-outline-primary mb-2 me-3">{% if mode == 'Add' %} Save {% else %} Update {% endif %}</button>
+                        <a href="{% url 'staff_list_of_brands' %}" class="btn btn-outline-danger mb-2">Cancel</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="row mt-4">
+                    <div class="form-group col">
+                        <label class="fw-bold" for="default">Is Default</label>
+                        <select class="form-select mt-2" id="default" name="default">
+                            <option value="0" {% if form.instance.default is False %} selected {% endif %}>
+                                No
+                            </option>
+                            <option value="1" {% if form.instance.default is True %} selected {% endif %}>
+                                Yes
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col">
+                        <label class="fw-bold" for="image">Image</label>
+                        <input type="file" class="form-control mt-2" id="image" name="image" accept="image/*,.heic">
+                        <div class="w-100 text-center mt-3" style="height: 200px;">
+                            <img id="image_preview" src="{{ form.instance.image.url|default:'' }}" height="100%" width="auto">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    document.getElementById('image').addEventListener('change', (event) => {
+        let value = event.target.files[0];
+        document.getElementById('image_preview').src = URL.createObjectURL(value);
+    });
+</script>
+{% endblock %}

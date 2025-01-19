@@ -1,0 +1,43 @@
+{% extends "account/layouts/customer.html" %}
+{% load static %}
+{% block customer_account_title %}
+    <h2>Account Addresses</h2>
+{% endblock %}
+{% block customer_account_content %}
+<div class="container">
+    <div class="row row-cols-md-4 g-5">
+        {% for address in addresses %}
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="w-100 text-end text-warning">
+                            {% if address.default %}
+                                <i class="bi bi-bookmark-check-fill"></i>
+                            {% endif %}
+                        </div>
+                        <div class="w-100">
+                            {{address|safe}}
+                        </div>
+                        <div class="w-100 text-center mt-3">
+                            <button class="btn btn-sm btn-outline-danger me-3 delete-address" data-record-id="{{address.id}}">Delete</button>
+                            <a class="btn btn-sm btn-outline-primary" href="/account/addresses/edit/{{address.id}}">Edit</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="w-100 text-center">
+                        <a class="btn btn-sm btn-outline-success" href="/account/addresses/add">Add New Address</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+{% endblock %}

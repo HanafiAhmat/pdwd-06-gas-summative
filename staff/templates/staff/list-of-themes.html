@@ -1,0 +1,72 @@
+{% extends "staff/layouts/staff.html" %}
+{% load static %}
+{% block staff_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h3>List of Themes</h3>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'staff_add_theme' %}" class="btn btn-outline-primary float-end" title="Add New Category">
+                Add New Category
+            </a>
+        </div>
+        <div class="col-12 mt-3">
+            <div class="card">
+                <div class="card-header text-center">
+                    {% include "partials/pagination.html" %}
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped-columns">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Code</th>
+                                <th>Short Description</th>
+                                <th>No. of Products</th>
+                                <th style="min-width: 130px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for theme in themes %}
+                                <tr>
+                                    <td>
+                                        {{ forloop.counter0|get_table_row_num:pagination.start }}
+                                    </td>
+                                    <td>
+                                        {{theme.name}}
+                                    </td>
+                                    <td>
+                                        {{theme.code}}
+                                    </td>
+                                    <td>
+                                        {{theme.short_description}}
+                                    </td>
+                                    <td>
+                                        {{theme.no_of_products}}
+                                    </td>
+                                    <td>
+                                        <a href="/themes/{{theme.code}}" class="btn btn-primary btn-sm d-inline-block me-1" title="View Product">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="/staff/edit-theme/{{theme.id}}" class="btn btn-primary btn-sm d-inline-block me-1" title="Edit Product">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a href="/staff/delete-theme/{{theme.id}}/" class="btn btn-danger btn-sm d-inline-block" onclick="return confirm('Are you sure you want to delete theme `{{theme.name}}`?')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-body-secondary text-center">
+                    {% include "partials/pagination.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

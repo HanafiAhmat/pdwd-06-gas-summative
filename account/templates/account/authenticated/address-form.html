@@ -1,0 +1,171 @@
+{% extends "account/layouts/customer.html" %}
+{% load static %}
+{% block customer_account_title %}
+    <h2>{{mode}} Address</h2>
+{% endblock %}
+{% block customer_account_content %}
+<main>
+    <div class="container">
+        <form class="row" method="POST" {% if is_validated %} was-validated {% endif %}>
+            {% csrf_token %}
+
+            <input type="hidden" name="user_id" value="{{request.user.id}}">
+
+            <div class="col">
+                <div class="row mt-4">
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="recipient_first_name">Recipient First Name</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.recipient_first_name.errors %} is-invalid {% endif %}" 
+                                id="recipient_first_name" 
+                                name="recipient_first_name" 
+                                value="{{ form.recipient_first_name.value|default:'' }}" 
+                                autocomplete="first-name given-name" 
+                                required>
+                        <div class="invalid-feedback">
+                            {{ form.recipient_first_name.errors }}
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="recipient_last_name">Recipient Last Name</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.recipient_last_name.errors %} is-invalid {% endif %}" 
+                                id="recipient_last_name" 
+                                name="recipient_last_name" 
+                                value="{{ form.recipient_last_name.value|default:'' }}" 
+                                autocomplete="last-name family-name" 
+                                required>
+                        <div class="invalid-feedback">
+                            {{ form.recipient_last_name.errors }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="recipient_phone">Recipient Phone Number</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.recipient_phone.errors %} is-invalid {% endif %}" 
+                                id="recipient_phone" 
+                                name="recipient_phone" 
+                                value="{{ form.recipient_phone.value|default:'' }}" 
+                                autocomplete="phone telephone" 
+                                required>
+                        <div class="invalid-feedback">
+                            {{ form.recipient_phone.errors }}
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="postcode">Postal Code</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.postcode.errors %} is-invalid {% endif %}" 
+                                id="postcode" 
+                                name="postcode" 
+                                value="{{ form.postcode.value|default:'' }}" 
+                                required>
+                        <div class="invalid-feedback">
+                            {{ form.postcode.errors }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="street">Street</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.street.errors %} is-invalid {% endif %}" 
+                                id="street" 
+                                name="street" 
+                                value="{{ form.street.value|default:'' }}" 
+                                required>
+                        <div class="invalid-feedback">
+                            {{ form.street.errors }}
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="street_optional">Street (optional)</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.street_optional.errors %} is-invalid {% endif %}" 
+                                id="street_optional" 
+                                name="street_optional" 
+                                value="{{ form.street_optional.value|default:'' }}" 
+                                >
+                        <div class="invalid-feedback">
+                            {{ form.street.errors }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="building_name">Building Name (optional)</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.building_name.errors %} is-invalid {% endif %}" 
+                                id="building_name" 
+                                name="building_name" 
+                                value="{{ form.building_name.value|default:'' }}" 
+                                >
+                        <div class="invalid-feedback">
+                            {{ form.street.errors }}
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="city">City</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.city.errors %} is-invalid {% endif %}" 
+                                id="city" 
+                                name="city" 
+                                value="{{ form.city.value|default:'' }}" 
+                                >
+                        <div class="invalid-feedback">
+                            {{ form.city.errors }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="state">State</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.state.errors %} is-invalid {% endif %}" 
+                                id="state" 
+                                name="state" 
+                                value="{{ form.state.value|default:'' }}" 
+                                >
+                        <div class="invalid-feedback">
+                            {{ form.state.errors }}
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="fw-bold" for="country">Country</label>
+                        <input type="text" 
+                                class="form-control mt-2 {% if is_validated and form.country.errors %} is-invalid {% endif %}" 
+                                id="country" 
+                                name="country" 
+                                value="{{ form.country.value|default:'' }}" 
+                                >
+                        <div class="invalid-feedback">
+                            {{ form.country.errors }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col-md-4 offset-md-4">
+                        <label class="fw-bold" for="default">Is Default</label>
+                        <select class="form-select mt-2" id="default" name="default">
+                            <option value="0" {% if form.instance.default is False %} selected {% endif %}>
+                                No
+                            </option>
+                            <option value="1" {% if form.instance.default is True %} selected {% endif %}>
+                                Yes
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="form-group col-md-12 text-center">
+                        <button type="submit" class="btn btn-outline-primary mt-4">Update</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</main>
+{% endblock %}

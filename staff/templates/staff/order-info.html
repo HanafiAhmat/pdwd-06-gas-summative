@@ -1,0 +1,56 @@
+{% extends "staff/layouts/staff.html" %}
+{% load static %}
+{% block staff_content %}
+<main>
+    <div class="container">
+        <div class="row py-4">
+            <div class="col-md-8">
+                <h2>Order #{{ order.id }}</h2>
+            </div>
+        </div>
+        <div class="row py-4">
+            <div class="col-md-8">
+                <h3>Items</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Item name</th>
+                            <th>Sold Price Per Item</th>
+                            <th>Quantity</th>
+                            <th>Total Item Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                            <tr>
+                                <td>
+                                    <a href="/products/{{item.product.category.code}}/{{item.product.slug}}">{{item.product.name}}</a>
+                                </td>
+                                <td>${{item.sold_price}}</td>
+                                <td>{{item.quantity}}</td>
+                                <td>${{item.total_price}}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end">Sub Total:</td>
+                            <td>${{order.get_sub_total_price}}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="row py-4">
+            <div class="col-md-8">
+                <h3>Delivery Address</h3>
+                <div class="card">
+                    <div class="card-body">
+                        {{order.address|safe}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "staff/layouts/staff.html" %}
+{% load static %}
+{% block staff_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h3>List of Brands</h3>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'staff_add_brand' %}" class="btn btn-outline-primary float-end" title="Add New Brand">
+                Add New Brand
+            </a>
+        </div>
+        <div class="col-12 mt-3">
+            <div class="card">
+                <div class="card-header text-center">
+                    {% include "partials/pagination.html" %}
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped-columns">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Short Description</th>
+                                <th>Is Default</th>
+                                <th>No. of Products</th>
+                                <th style="min-width: 130px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for brand in brands %}
+                                <tr>
+                                    <td>
+                                        {{ forloop.counter0|get_table_row_num:pagination.start }}
+                                    </td>
+                                    <td>
+                                        <img src="{{brand.image.url|default:''}}" class="img" style="max-height: 100px;max-width: 100px;" alt="">
+                                    </td>
+                                    <td>
+                                        {{brand.name}}
+                                    </td>
+                                    <td>
+                                        {{brand.short_description}}
+                                    </td>
+                                    <td>
+                                        {{brand.default}}
+                                    </td>
+                                    <td>
+                                        {{brand.no_of_products}}
+                                    </td>
+                                    <td>
+                                        <a href="/brands/{{brand.code}}" class="btn btn-primary btn-sm d-inline-block me-1" title="View Product brand">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="/staff/edit-brand/{{brand.id}}" class="btn btn-primary btn-sm d-inline-block me-1" title="Edit Product Brand">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a href="/staff/delete-brand/{{brand.id}}/" class="btn btn-danger btn-sm d-inline-block" onclick="return confirm('Are you sure you want to delete brand `{{brand.name}}`?')">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer text-body-secondary text-center">
+                    {% include "partials/pagination.html" %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

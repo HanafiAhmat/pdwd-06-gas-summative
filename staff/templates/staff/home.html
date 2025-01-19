@@ -1,0 +1,89 @@
+{% extends "staff/layouts/staff.html" %}
+{% load static %}
+{% block staff_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h3>Admin Home</h3>
+        </div>
+        <div class="col-12 mt-3">
+            <div class="card">
+                <div class="card-header text-center">
+                    Store Review Summary
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped-columns text-center">
+                        <thead>
+                            <tr>
+                                <th>Total Reviews</th>
+                                <th>Total Positive Reviews</th>
+                                <th>Total Negative Reviews</th>
+                                <th>Average Sentiment Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    {{ reviewSummary.totalReviews }}
+                                </td>
+                                <td>
+                                    {{ reviewSummary.totalPositive }}
+                                </td>
+                                <td>
+                                    {{ reviewSummary.totalNegative }}
+                                </td>
+                                <td>
+                                    {{ reviewSummary.averageSentimentScore }}%
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-3">
+            <div class="card">
+                <div class="card-header text-center">
+                    Latest Orders
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped-columns">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Created At</th>
+                                <th>Customer Info</th>
+                                <th>No. Of Items</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in orders %}
+                                <tr>
+                                    <td>
+                                        {{ forloop.counter }}
+                                    </td>
+                                    <td>
+                                        {{order.created_at}}
+                                    </td>
+                                    <td>
+                                        {{order.user.first_name}} {{order.user.last_name}} [{{order.user.email}}]
+                                    </td>
+                                    <td>
+                                        {{order.no_of_items}}
+                                    </td>
+                                    <td>
+                                        <a href="/staff/order-info/{{order.id}}" class="btn btn-primary btn-sm d-inline-block me-1" title="View Order">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
