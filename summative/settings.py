@@ -104,7 +104,7 @@ WSGI_APPLICATION = 'summative.wsgi.application'
 # }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': os.getenv('DJANGO_DB_ENGINE', 'django.db.backends.mysql'),
         'NAME': os.getenv('DJANGO_DB_NAME', 'project'),
         'USER': os.getenv('DJANGO_DB_USER', 'root'),
         'PASSWORD': os.getenv('DJANGO_DB_PASSWORD', 'pass'),

@@ -1,0 +1,39 @@
+version: '3.8'
+name: gas_smartshop
+services:
+  db:
+    image: mysql:8.0.39
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: gas_smartshop
+      MYSQL_USER: smartshop
+      MYSQL_PASSWORD: password
+    ports:
+      - 3307:3306
+    volumes:
+      - ./docker/mysql/data/:/var/lib/mysql
+    networks:
+      - gas
+  backend:
+    build:
+      context: .
+      dockerfile: docker/python/Dockerfile
+    ports:
+      - 80:8000
+    volumes:
+      - ./:/var/www/app
+    depends_on:
+      - db
+    networks:
+      - gas
+  mailhog:
+    image: corpusops/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - gas
+networks:
+  gas:
+    driver: bridge

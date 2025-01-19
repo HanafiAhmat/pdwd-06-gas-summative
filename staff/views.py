@@ -22,11 +22,17 @@ def home(request):
     orders = Order.objects.all().order_by('-created_at')
     reviews = ProductReview.objects
     totalReviews = reviews.count()
+    averageSentimentScore = reviews.aggregate(Avg('sentiment_score'))['sentiment_score__avg']
+    if averageSentimentScore is not None and averageSentimentScore > 0:
+        averageSentimentScore = round(averageSentimentScore * 100, 2)
+    else:
+        averageSentimentScore = 0
+
     reviewSummary = {
         'totalReviews': totalReviews,
         'totalPositive': reviews.filter(sentiment='POSITIVE').count(),
         'totalNegative': reviews.filter(sentiment='NEGATIVE').count(),
-        'averageSentimentScore': round(reviews.aggregate(Avg('sentiment_score'))['sentiment_score__avg'] * 100, 2),
+        'averageSentimentScore': averageSentimentScore,
     }
 
     return render(request, 'staff/home.html', {'orders': orders, 'reviewSummary': reviewSummary})
